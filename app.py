@@ -53,9 +53,7 @@ with tabs[0]:
     st.subheader("📑 Estimate Analyzer")
     st.info("Tool coming soon.")
     st.info("this can show basic project info (name, client, location, scope), estimator assigned, timeline (start/target completion). status, estimated cost.")
-    st.info("some automation ideas include:
-            - autofill from forms (pdf, word, etc)
-            - AI-generated short project summary based on scope")
+    st.info("some automation ideas include: autofill from forms (pdf, word, etc) and AI-generated short project summary based on scope")
 
 with tabs[1]:
     st.subheader("📐 Takeoff Helper")
