@@ -46,6 +46,8 @@ tabs = st.tabs([
     "Unit Pricing", 
     "Scope Review", 
     "Bid Summary", 
+    "Proposal Checklist",
+    "Proposal & Specs",
     "More Coming Soon"
 ])
 
