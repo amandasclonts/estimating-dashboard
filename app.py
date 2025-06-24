@@ -4,7 +4,9 @@ import fitz  # PyMuPDF
 import docx
 from dotenv import load_dotenv
 import os
-import openai
+from openai import OpenAI
+
+client = OpenAI(api_key=openai_api_key)
 
 load_dotenv()
 openai_api_key = os.getenv("OPENAI_API_KEY")
@@ -203,8 +205,8 @@ Specifications:
 
 Be specific and concise in your analysis.
 """
-            response = openai.ChatCompletion.create(
-                model="gpt-4-1106-preview",  # Use gpt-4-1-nano if applicable
+            response = client.chat.completions.create(
+                model="gpt-4-1106-preview",
                 messages=[
                     {"role": "system", "content": "You are a construction compliance assistant."},
                     {"role": "user", "content": prompt}
