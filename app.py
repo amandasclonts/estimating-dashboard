@@ -4,7 +4,9 @@ import fitz  # PyMuPDF
 import docx
 from dotenv import load_dotenv
 import os
+import openai
 
+openai.api_key = openai_api_key
 load_dotenv()
 openai_api_key = os.getenv("OPENAI_API_KEY")
 
@@ -63,6 +65,29 @@ with tabs[0]:
     st.info("This can show basic project info (name, client, location, scope), estimator assigned, timeline (start/target completion). status, estimated cost.")
     st.info("Automation ideas: Autofill from forms (pdf, word, etc) and AI-generated short project summary based on scope")
 
+def get_project_summary(text):
+    if not text.strip():
+        return "No text provided."
+    
+    response = openai.ChatCompletion.create(
+        model="gpt-4-1106-preview",  # Change to "gpt-4-1-nano" if that’s your plan
+        messages=[
+            {"role": "system", "content": "You are a helpful assistant that summarizes construction project estimates."},
+            {"role": "user", "content": f"Summarize this project: {text}"}
+        ],
+        temperature=0.3,
+        max_tokens=300
+    )
+    return response.choices[0].message.content
+
+# Simple input for now (replace later with auto text from files)
+user_input = st.text_area("Paste project text here", "", height=200)
+
+if st.button("🔍 Generate AI Summary"):
+    summary = get_project_summary(user_input)
+    st.success("✅ Summary Generated")
+    st.text_area("🧠 AI Project Summary", summary, height=200)
+    
 with tabs[1]:
     st.subheader("📐 Takeoff Helper")
     st.info("Purpose: Track all material estimates and calculations")
