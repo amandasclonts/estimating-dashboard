@@ -174,11 +174,14 @@ with tabs[6]:
 
         specs_text = extract_text_from_pdf(specs_file)
 
-        # Quick manual section check
-        if "Thermal and Moisture Protection" in specs_text:
-            st.success("Found 'Thermal and Moisture Protection' in specifications.")
-        else:
-            st.warning("Could not find 'Thermal and Moisture Protection' in the specs document.")
+       # Manual keyword check
+        keywords = ["thermal and moisture protection", "metal wall panels", "acm", "metal siding"]
+        st.markdown("### 🔍 Manual Keyword Check in Specifications:")
+        for keyword in keywords:
+            if keyword.lower() in specs_text.lower():
+                st.success(f"✅ Found '{keyword}' in specifications.")
+            else:
+                st.warning(f"⚠️ '{keyword}' not found in specifications.")
 
         # Load OpenAI key
         openai.api_key = openai_api_key
