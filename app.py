@@ -6,10 +6,9 @@ from dotenv import load_dotenv
 import os
 from openai import OpenAI
 
-client = OpenAI(api_key=openai_api_key)
-
 load_dotenv()
 openai_api_key = os.getenv("OPENAI_API_KEY")
+client = OpenAI(api_key=openai_api_key)
 
 # --- Config ---
 st.set_page_config(page_title="Estimating AI Dashboard", layout="wide")
