@@ -88,31 +88,29 @@ with tabs[4]:
     st.info("What to show: Pie chart or graph for: material, labor, equipment, subcontractos, overhead, profit")
     st.info("Automation ideas: Auto-generate charts from uploaded Excel/CSV files, Let estimators interactively adjust markup and see live effects")
 
-openai.api_key = openai_api_key
+    openai.api_key = openai_api_key
 
-def get_project_summary(text):
-    if not text.strip():
-        return "No text provided."
-    
-    response = openai.ChatCompletion.create(
-        model="gpt-4-1106-preview",  # Change to "gpt-4-1-nano" if that’s your plan
-        messages=[
-            {"role": "system", "content": "You are a helpful assistant that summarizes construction project estimates."},
-            {"role": "user", "content": f"Summarize this project: {text}"}
-        ],
-        temperature=0.3,
-        max_tokens=300
-    )
-    return response.choices[0].message.content
+    def get_project_summary(text):
+        if not text.strip():
+            return "No text provided."
 
-# Simple input for now (replace later with auto text from files)
-user_input = st.text_area("Paste project text here", "", height=200)
+        response = openai.ChatCompletion.create(
+            model="gpt-4-1106-preview",  # Change to "gpt-4-1-nano" if needed
+            messages=[
+                {"role": "system", "content": "You are a helpful assistant that summarizes construction project estimates."},
+                {"role": "user", "content": f"Summarize this project: {text}"}
+            ],
+            temperature=0.3,
+            max_tokens=300
+        )
+        return response.choices[0].message.content
 
-if st.button("🔍 Generate AI Summary"):
-    summary = get_project_summary(user_input)
-    st.success("✅ Summary Generated")
-    st.text_area("🧠 AI Project Summary", summary, height=200)
-    
+    user_input = st.text_area("Paste project text here", "", height=200)
+
+    if st.button("🔍 Generate AI Summary"):
+        summary = get_project_summary(user_input)
+        st.success("✅ Summary Generated")
+        st.text_area("🧠 AI Project Summary", summary, height=200)
 
 with tabs[5]:
     st.subheader("✅ Proposal Checklist")
