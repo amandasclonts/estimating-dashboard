@@ -1,5 +1,7 @@
 import streamlit as st
 import base64
+import fitz  # PyMuPDF
+import docx
 
 # --- Config ---
 st.set_page_config(page_title="Estimating AI Dashboard", layout="wide")
@@ -81,6 +83,33 @@ with tabs[4]:
 
 with tabs[5]:
     st.subheader("✅ Proposal Checklist")
+
+    uploaded_file = st.file_uploader("Upload a Proposal (PDF or Word)", type=["pdf", "docx"])
+
+    def extract_text_from_pdf(file):
+        text = ""
+        with fitz.open(stream=file.read(), filetype="pdf") as doc:
+            for page in doc:
+                text += page.get_text()
+        return text
+
+    def extract_text_from_docx(file):
+        doc = docx.Document(file)
+        return "\n".join([para.text for para in doc.paragraphs])
+
+    if uploaded_file:
+        if uploaded_file.type == "application/pdf":
+            proposal_text = extract_text_from_pdf(uploaded_file)
+        elif uploaded_file.type in ["application/vnd.openxmlformats-officedocument.wordprocessingml.document"]:
+            proposal_text = extract_text_from_docx(uploaded_file)
+        else:
+            st.error("Unsupported file type.")
+            st.stop()
+
+        st.success("✅ Proposal uploaded and text extracted!")
+        st.text_area("📄 Extracted Text", proposal_text, height=300)
+
+        st.warning("⚠️ AI checklist comparison will be added once checklist/API is provided.")
 
 with tabs[6]:
     st.subheader("↔️ Proposal & Specs")
