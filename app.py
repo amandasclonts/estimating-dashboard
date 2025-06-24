@@ -2,6 +2,11 @@ import streamlit as st
 import base64
 import fitz  # PyMuPDF
 import docx
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+openai_api_key = os.getenv("OPENAI_API_KEY")
 
 # --- Config ---
 st.set_page_config(page_title="Estimating AI Dashboard", layout="wide")
