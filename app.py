@@ -154,7 +154,6 @@ with tabs[6]:
     if proposal_file and specs_file:
         import fitz  # PyMuPDF
         from docx import Document
-        import io
 
         def extract_text_from_pdf(file):
             doc = fitz.open(stream=file.read(), filetype="pdf")
@@ -167,24 +166,57 @@ with tabs[6]:
             doc = Document(file)
             return "\n".join([p.text for p in doc.paragraphs])
 
-        # Get proposal text
+        # Extract text
         if proposal_file.name.endswith(".pdf"):
             proposal_text = extract_text_from_pdf(proposal_file)
         else:
             proposal_text = extract_text_from_docx(proposal_file)
 
-        # Get specs text
         specs_text = extract_text_from_pdf(specs_file)
 
-        # Look for "Thermal and Moisture Protection" section
+        # Quick manual section check
         if "Thermal and Moisture Protection" in specs_text:
             st.success("Found 'Thermal and Moisture Protection' in specifications.")
-            st.markdown("🔍 We'll check that this section is adequately covered in your proposal when checklist logic is added.")
         else:
             st.warning("Could not find 'Thermal and Moisture Protection' in the specs document.")
 
-        # (Placeholder for checklist comparison logic)
-        st.info("✅ Document extraction complete. Proposal and specs are ready for checklist logic.")
+        # Load OpenAI key
+        openai.api_key = openai_api_key
+
+        # AI Cross-Check Function
+        def get_ai_comparison(proposal_text, specs_text):
+            prompt = f"""
+You are a construction compliance assistant. Your job is to analyze two documents:
+1. A project proposal
+2. A specification document
+
+Return a bullet list of any sections, materials, or language from the specification that seem to be missing or not clearly addressed in the proposal.
+
+Proposal:
+{proposal_text[:6000]}
+
+Specifications:
+{specs_text[:6000]}
+
+Be specific and concise in your analysis.
+"""
+            response = openai.ChatCompletion.create(
+                model="gpt-4-1106-preview",  # Use gpt-4-1-nano if applicable
+                messages=[
+                    {"role": "system", "content": "You are a construction compliance assistant."},
+                    {"role": "user", "content": prompt}
+                ],
+                temperature=0.2,
+                max_tokens=500
+            )
+            return response.choices[0].message.content
+
+        # Button to run AI check
+        if st.button("🔎 Run AI Cross-Check"):
+            comparison_result = get_ai_comparison(proposal_text, specs_text)
+            st.success("✅ Cross-check complete!")
+            st.markdown("### 📋 AI Findings:")
+            st.markdown(comparison_result)
 
 
 with tabs[7]:
