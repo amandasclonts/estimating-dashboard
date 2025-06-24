@@ -6,7 +6,6 @@ from dotenv import load_dotenv
 import os
 import openai
 
-openai.api_key = openai_api_key
 load_dotenv()
 openai_api_key = os.getenv("OPENAI_API_KEY")
 
@@ -64,6 +63,8 @@ with tabs[0]:
     st.subheader("📑 Estimate Analyzer")
     st.info("This can show basic project info (name, client, location, scope), estimator assigned, timeline (start/target completion). status, estimated cost.")
     st.info("Automation ideas: Autofill from forms (pdf, word, etc) and AI-generated short project summary based on scope")
+
+openai.api_key = openai_api_key
 
 def get_project_summary(text):
     if not text.strip():
