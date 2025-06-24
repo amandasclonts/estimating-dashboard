@@ -88,8 +88,6 @@ with tabs[4]:
     st.info("What to show: Pie chart or graph for: material, labor, equipment, subcontractos, overhead, profit")
     st.info("Automation ideas: Auto-generate charts from uploaded Excel/CSV files, Let estimators interactively adjust markup and see live effects")
 
-    openai.api_key = openai_api_key
-
     def get_project_summary(text):
         if not text.strip():
             return "No text provided."
@@ -182,9 +180,6 @@ with tabs[6]:
                 st.success(f"✅ Found '{keyword}' in specifications.")
             else:
                 st.warning(f"⚠️ '{keyword}' not found in specifications.")
-
-        # Load OpenAI key
-        openai.api_key = openai_api_key
 
         # AI Cross-Check Function
         def get_ai_comparison(proposal_text, specs_text):
