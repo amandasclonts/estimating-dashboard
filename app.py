@@ -112,7 +112,49 @@ with tabs[5]:
         st.warning("⚠️ AI checklist comparison will be added once checklist/API is provided.")
 
 with tabs[6]:
-    st.subheader("↔️ Proposal & Specs")
+    st.subheader("↔️ Proposal & Specs Cross-Check")
+
+    st.markdown("### 📤 Upload Proposal Document")
+    proposal_file = st.file_uploader("Upload your proposal (PDF or DOCX)", type=["pdf", "docx"], key="proposal")
+
+    st.markdown("### 📤 Upload Specification Document")
+    specs_file = st.file_uploader("Upload specifications (PDF only)", type=["pdf"], key="specs")
+
+    if proposal_file and specs_file:
+        import fitz  # PyMuPDF
+        from docx import Document
+        import io
+
+        def extract_text_from_pdf(file):
+            doc = fitz.open(stream=file.read(), filetype="pdf")
+            text = ""
+            for page in doc:
+                text += page.get_text()
+            return text
+
+        def extract_text_from_docx(file):
+            doc = Document(file)
+            return "\n".join([p.text for p in doc.paragraphs])
+
+        # Get proposal text
+        if proposal_file.name.endswith(".pdf"):
+            proposal_text = extract_text_from_pdf(proposal_file)
+        else:
+            proposal_text = extract_text_from_docx(proposal_file)
+
+        # Get specs text
+        specs_text = extract_text_from_pdf(specs_file)
+
+        # Look for "Thermal and Moisture Protection" section
+        if "Thermal and Moisture Protection" in specs_text:
+            st.success("Found 'Thermal and Moisture Protection' in specifications.")
+            st.markdown("🔍 We'll check that this section is adequately covered in your proposal when checklist logic is added.")
+        else:
+            st.warning("Could not find 'Thermal and Moisture Protection' in the specs document.")
+
+        # (Placeholder for checklist comparison logic)
+        st.info("✅ Document extraction complete. Proposal and specs are ready for checklist logic.")
+
 
 with tabs[7]:
     st.info("🚧 Stay tuned for more tools here!")
