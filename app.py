@@ -2,12 +2,11 @@ import streamlit as st
 import base64
 import fitz  # PyMuPDF
 import docx
-from dotenv import load_dotenv
 import os
+import streamlit as st
 from openai import OpenAI
 
-load_dotenv()
-openai_api_key = os.getenv("OPENAI_API_KEY")
+openai_api_key = st.secrets["OPENAI_API_KEY"]
 client = OpenAI(api_key=openai_api_key)
 
 # --- Config ---
