@@ -173,7 +173,7 @@ with tabs[6]:
         specs_text = extract_text_from_pdf(specs_file)
 
        # Manual keyword check
-        keywords = ["Thermal and Moisture Protection", "Metal Wall Panels", "ACM", "Metal Siding"]
+        keywords = ["Thermal and Moisture Protection", "Metal Wall Panels", "ACM", "Metal Siding", "Soffit Panels", "Sheet Metal", "Sealants"]
         st.markdown("### 🔍 Manual Keyword Check in Specifications:")
         for keyword in keywords:
             if keyword.lower() in specs_text.lower():
