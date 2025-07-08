@@ -5,3 +5,5 @@ PyMuPDF
 pandas
 python-docx
 python-dotenv
+matplotlib
+openpyxl
