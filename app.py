@@ -85,15 +85,46 @@ with tabs[3]:
 with tabs[4]:
     st.subheader("📊 Bid Summary Generator")
     st.info("Purpose: Visual summary of where money is going")
-    st.info("What to show: Pie chart or graph for: material, labor, equipment, subcontractos, overhead, profit")
+    st.info("What to show: Pie chart or graph for: material, labor, equipment, subcontractors, overhead, profit")
     st.info("Automation ideas: Auto-generate charts from uploaded Excel/CSV files, Let estimators interactively adjust markup and see live effects")
 
+    import pandas as pd
+    import matplotlib.pyplot as plt
+
+    # File uploader for cost breakdown
+    cost_file = st.file_uploader("📥 Upload Bid Breakdown (CSV or Excel)", type=["csv", "xlsx"], key="bid_breakdown")
+
+    if cost_file:
+        try:
+            if cost_file.name.endswith(".csv"):
+                df = pd.read_csv(cost_file)
+            else:
+                df = pd.read_excel(cost_file)
+
+            st.write("📋 Uploaded Data Preview:")
+            st.dataframe(df)
+
+            # Normalize column names
+            df.columns = df.columns.str.strip().str.lower()
+
+            expected_cols = ['category', 'cost']
+            if all(col in df.columns for col in expected_cols):
+                fig, ax = plt.subplots()
+                ax.pie(df['cost'], labels=df['category'], autopct="%1.1f%%", startangle=90)
+                ax.axis('equal')
+                st.pyplot(fig)
+            else:
+                st.error("Your file must have columns named **Category** and **Cost**.")
+        except Exception as e:
+            st.error(f"Something went wrong while reading the file: {e}")
+
+    # AI Summary Section
     def get_project_summary(text):
         if not text.strip():
             return "No text provided."
 
-        response = openai.ChatCompletion.create(
-            model="gpt-4-1106-preview",  # Change to "gpt-4-1-nano" if needed
+        response = client.chat.completions.create(
+            model="gpt-4-1106-preview",
             messages=[
                 {"role": "system", "content": "You are a helpful assistant that summarizes construction project estimates."},
                 {"role": "user", "content": f"Summarize this project: {text}"}
@@ -103,12 +134,13 @@ with tabs[4]:
         )
         return response.choices[0].message.content
 
-    user_input = st.text_area("Paste project text here", "", height=200)
+    user_input = st.text_area("📝 Paste project text for AI summary", "", height=200)
 
     if st.button("🔍 Generate AI Summary"):
         summary = get_project_summary(user_input)
         st.success("✅ Summary Generated")
         st.text_area("🧠 AI Project Summary", summary, height=200)
+
 
 with tabs[5]:
     st.subheader("✅ Proposal Checklist")
