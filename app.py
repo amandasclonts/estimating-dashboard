@@ -107,10 +107,10 @@ with tabs[4]:
             # Normalize column names
             df.columns = df.columns.str.strip().str.lower()
 
-            expected_cols = ['category', 'cost']
+            expected_cols = ['Material', 'Quantity']
             if all(col in df.columns for col in expected_cols):
                 fig, ax = plt.subplots()
-                ax.pie(df['cost'], labels=df['category'], autopct="%1.1f%%", startangle=90)
+                ax.pie(df['Quantity'], labels=df['Material'], autopct="%1.1f%%", startangle=90)
                 ax.axis('equal')
                 st.pyplot(fig)
             else:
