@@ -94,9 +94,9 @@ with tabs[4]:
     # File uploader for cost breakdown
     cost_file = st.file_uploader("📥 Upload Bid Breakdown (CSV or Excel)", type=["csv", "xlsx"], key="bid_breakdown")
 
-    if cost_file:
+    if material_file:
         try:
-            if cost_file.name.endswith(".csv"):
+            if material_file.name.endswith(".csv"):
                 df = pd.read_csv(cost_file)
             else:
                 df = pd.read_excel(cost_file)
@@ -107,14 +107,14 @@ with tabs[4]:
             # Normalize column names
             df.columns = df.columns.str.strip().str.lower()
 
-            expected_cols = ['Material', 'Quantity']
+            expected_cols = ['Material', 'Material Total']
             if all(col in df.columns for col in expected_cols):
                 fig, ax = plt.subplots()
-                ax.pie(df['Quantity'], labels=df['Material'], autopct="%1.1f%%", startangle=90)
+                ax.pie(df['Material Total'], labels=df['Material'], autopct="%1.1f%%", startangle=90)
                 ax.axis('equal')
                 st.pyplot(fig)
             else:
-                st.error("Your file must have columns named **Category** and **Cost**.")
+                st.error("Your file must have columns named **Material** and **Material Total**.")
         except Exception as e:
             st.error(f"Something went wrong while reading the file: {e}")
 
