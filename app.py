@@ -94,9 +94,9 @@ with tabs[4]:
     # File uploader for cost breakdown
     cost_file = st.file_uploader("📥 Upload Bid Breakdown (CSV or Excel)", type=["csv", "xlsx"], key="bid_breakdown")
 
-    if material_file:
+    if cost_file:
         try:
-            if material_file.name.endswith(".csv"):
+            if cost_file.name.endswith(".csv"):
                 df = pd.read_csv(cost_file)
             else:
                 df = pd.read_excel(cost_file)
