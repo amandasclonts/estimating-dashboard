@@ -91,32 +91,53 @@ with tabs[4]:
     import pandas as pd
     import matplotlib.pyplot as plt
 
-    # File uploader for cost breakdown
     cost_file = st.file_uploader("📥 Upload Bid Breakdown (CSV or Excel)", type=["csv", "xlsx"], key="bid_breakdown")
 
     if cost_file:
         try:
             if cost_file.name.endswith(".csv"):
-                df = pd.read_csv(cost_file)
+                df = pd.read_csv(cost_file, header=None)
             else:
-                df = pd.read_excel(cost_file)
+                df = pd.read_excel(cost_file, header=None)
 
-            st.write("📋 Uploaded Data Preview:")
+            st.write("📋 Uploaded Raw Data Preview:")
             st.dataframe(df)
 
-            # Normalize column names
-            df.columns = df.columns.str.strip().str.lower()
+            # Find header row index for Material and Material Total
+            header_row = None
+            for idx, row in df.iterrows():
+                row_lower = row.astype(str).str.lower()
+                if "material" in row_lower.values and "material total" in row_lower.values:
+                    header_row = idx
+                    break
 
-            expected_cols = ['Material', 'Material Total']
-            if all(col in df.columns for col in expected_cols):
-                fig, ax = plt.subplots()
-                ax.pie(df['Material Total'], labels=df['Material'], autopct="%1.1f%%", startangle=90)
-                ax.axis('equal')
-                st.pyplot(fig)
+            if header_row is not None:
+                # Re-read with correct header row
+                if cost_file.name.endswith(".csv"):
+                    df = pd.read_csv(cost_file, header=header_row)
+                else:
+                    df = pd.read_excel(cost_file, header=header_row)
+
+                st.success(f"✅ Found headers at row {header_row + 1} — displaying material data.")
+                st.dataframe(df)
+
+                if "Material" in df.columns and "Material Total" in df.columns:
+                    filtered_df = df[["Material", "Material Total"]].dropna()
+
+                    st.write("📊 Material Cost Breakdown:")
+                    st.dataframe(filtered_df)
+
+                    fig, ax = plt.subplots()
+                    ax.pie(filtered_df["Material Total"], labels=filtered_df["Material"], autopct="%1.1f%%", startangle=90)
+                    ax.axis('equal')
+                    st.pyplot(fig)
+                else:
+                    st.error("❌ Columns named **Material** and **Material Total** were not found after header detection.")
             else:
-                st.error("Your file must have columns named **Material** and **Material Total**.")
+                st.error("❌ Could not find a header row with **Material** and **Material Total** in the same row.")
+
         except Exception as e:
-            st.error(f"Something went wrong while reading the file: {e}")
+            st.error(f"⚠️ Error processing file: {e}")
 
     # AI Summary Section
     def get_project_summary(text):
